@@ -35,7 +35,7 @@ def get_proper_command(desired_command, current_directory):
 
 def run_desired_command_for_os(command_to_run):
     if "nose" in vim.eval("a:command_to_run") or "nose" in command_to_run:
-        vim.command("{0} 2>&1 | tee /tmp/test_results.txt".format(command_to_run))
+        vim.command("{0} {1} 2>&1 | tee /tmp/test_results.txt".format(command_to_run, vim.eval("g:nosetests_options")))
     elif _platform == 'linux' or _platform == 'linux2':
         vim.command(":!python {0} 2>&1 | tee /tmp/test_results.txt".format(command_to_run))
     elif _platform == 'darwin':
@@ -64,3 +64,7 @@ command! NosetestClass call RunDesiredTests("nose_class")
 command! NosetestMethod call RunDesiredTests("nose_method")
 command! NosetestBaseMethod call RunDesiredTests("nose_base_method")
 command! RerunLastTests call RunDesiredTests("rerun")
+
+"command! ToggleNosetestsVerbose 
+"command! ToggleNosetestsCaptureStdout
+"command! ToggleNosetestsCoverage
