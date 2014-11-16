@@ -5,6 +5,14 @@ if !has('python')
     finish
 endif
 
+if !exists('g:nosetests_options')
+    let g:nosetests_options=""
+endif
+
+if !exists('g:nosetests_default_verbose')
+    let g:nosetests_default_verbose="-v"
+endif
+
 " -----------------------------
 " Add our directory to the path
 " -----------------------------
@@ -65,18 +73,24 @@ command! NosetestMethod call RunDesiredTests("nose_method")
 command! NosetestBaseMethod call RunDesiredTests("nose_base_method")
 command! RerunLastTests call RunDesiredTests("rerun")
 
-function! ToggleStringContainsWord(word, string)
+function! ToggleStringContainsWord(words, string, addword)
     let l:foundit = 0
     let l:splitty = split(a:string)
-    let l:idx = index(l:splitty, a:word)
-    if l:idx >= 0
-        call remove(l:splitty, l:idx)
-    else
-        call add(l:splitty, a:word)
+    for l:word in a:words
+        let l:idx = index(l:splitty, l:word)
+        if l:idx >= 0
+            call remove(l:splitty, l:idx)
+            let l:foundit = l:foundit + 1
+        endif
+    endfor
+    if l:foundit > 1
+        echom "WARNING: found more than one match"
+    elseif l:foundit == 0
+        call add(l:splitty, a:addword)
     endif
     return join(l:splitty)
 endfunction
 
-command! ToggleNosetestsVerbose let g:nosetests_options = ToggleStringContainsWord('-v', g:nosetests_options) | echo g:nosetests_options
-command! ToggleNosetestsCaptureStdout let g:nosetests_options = ToggleStringContainsWord('-s', g:nosetests_options) | echo g:nosetests_options
-command! ToggleNosetestsCoverage let g:nosetests_options = ToggleStringContainsWord('--with-cover', g:nosetests_options) | echo g:nosetests_options
+command! ToggleNosetestsVerbose let g:nosetests_options = ToggleStringContainsWord(['-v', '-vv', '--verbose'], g:nosetests_options, g:nosetests_default_verbose) | echo g:nosetests_options
+command! ToggleNosetestsCaptureStdout let g:nosetests_options = ToggleStringContainsWord(['-s', '--nocapture'], g:nosetests_options, '-s') | echo g:nosetests_options
+command! ToggleNosetestsCoverage let g:nosetests_options = ToggleStringContainsWord(['--with-cover'], g:nosetests_options, '--with-cover') | echo g:nosetests_options
