@@ -167,3 +167,26 @@ The `.vim-django` file will contain only the top level package name, in this cas
 
 Nothing other than nose is required to use this plugin for tests that are
 outside of a Django application.
+
+#### Flags outside of Django
+
+When run outside of Django (i.e., using the `NosetestFile`, `NosetestClass`,
+`NosetestMethod`, or `NosetestBaseMethod` functions), the contents of the
+variable `g:nosetests_options` will be passed as arguments to `nosetests`.
+By default, `g:nosetests_options` is an empty string. You can set this
+variable in your .vimrc by adding a line, e.g,
+
+    let g:nosetests_options = "-v -s --with-cover"
+
+From within VIM, you can toggle a few of these options:
+
+* `ToggleNosetestsCaptureStdout` toggles the `-s` or `--nocapture` flag. It
+  will remove either form, but only adds the flag as `-s`.
+* `ToggleNosetestsCover` toggles the `--with-cover` flag.
+* `ToggleNosetestsVerbose` toggle the `-v`, `-vv`, or `--verbose` flags. It
+  will remove any of these, and will replace them by the value of
+  `g:nosetests_default_verbose`, which is set to `-v` unless overridden in
+  your .vimrc.
+
+These functions can, of course, also be remapped for convenience as
+described above.
